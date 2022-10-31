@@ -1,4 +1,4 @@
-import { store } from '../multiplayer/data'
+import { createRoom } from '../multiplayer/data'
 import Player from '../Player'
 
 class _Menu {
@@ -12,8 +12,7 @@ class _Menu {
     try {
       if (this.client.isInLobby()) {
         const roomName = `room-${this.client.availableRooms().length}` // the server will assign a GUID as name
-
-        store.actors[roomName] = []
+        createRoom(roomName)
 
         this.client.createRoom(roomName)
       }
@@ -28,9 +27,7 @@ class _Menu {
     try {
       const index = this.gameList.selectedIndex
       const roomName = this.gameList.options[index].text
-
-      const isRoomExist = !!store.actors[roomName]
-      if (!isRoomExist) store.actors[roomName] = []
+      createRoom(roomName)
 
       this.client.joinRoom(roomName)
     } catch (error) {

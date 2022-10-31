@@ -11,6 +11,7 @@ class BasicCharacterController {
     this.name = params.name
     this.model = params.model
     this.modelAnimations = params.animations
+    this.isClient = params.isClient
 
     this.animations = {}
 
@@ -19,7 +20,8 @@ class BasicCharacterController {
     this.velocity = new THREE.Vector3(0, 0, 0)
     this._position = new THREE.Vector3()
 
-    this.input = new BasicCharacterControllerInput()
+    if (this.isClient) this.input = new BasicCharacterControllerInput()
+
     this.stateMachine = new CharacterFSM(
       new BasicCharacterControllerProxy(this.animations)
     )
@@ -118,24 +120,24 @@ class BasicCharacterController {
 
     const acc = this.acceleration.clone()
 
-    if (this.input.keys.shift) {
+    if (this.input?.keys.shift) {
       acc.multiplyScalar(2.0)
     }
     if (this.stateMachine.currentState?.name == 'dance') {
       acc.multiplyScalar(0.0)
     }
-    if (this.input.keys.forward) {
+    if (this.input?.keys.forward) {
       velocity.z += acc.z * time
     }
-    if (this.input.keys.backward) {
+    if (this.input?.keys.backward) {
       velocity.z -= acc.z * time
     }
-    if (this.input.keys.left) {
+    if (this.input?.keys.left) {
       A.set(0, 1, 0)
       Q.setFromAxisAngle(A, 4.0 * Math.PI * time * this.acceleration.y)
       R.multiply(Q)
     }
-    if (this.input.keys.right) {
+    if (this.input?.keys.right) {
       A.set(0, 1, 0)
       Q.setFromAxisAngle(A, 4.0 * -Math.PI * time * this.acceleration.y)
       R.multiply(Q)

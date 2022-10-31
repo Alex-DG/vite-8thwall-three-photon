@@ -29,9 +29,9 @@ class IdleState extends State {
   exit() {}
 
   update(_, input) {
-    if (input.keys.forward || input.keys.backward) {
+    if (input?.keys.forward || input?.keys.backward) {
       this.parent.setState('walk')
-    } else if (input.keys.space) {
+    } else if (input?.keys.space) {
       this.parent.setState('dance')
     }
   }

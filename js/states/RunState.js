@@ -37,8 +37,8 @@ class RunState extends State {
   exit() {}
 
   update(_, input) {
-    if (input.keys.forward || input.keys.backward) {
-      if (!input.keys.shift) {
+    if (input?.keys.forward || input?.keys.backward) {
+      if (!input?.keys.shift) {
         this.parent.setState('walk')
       }
 

@@ -118,7 +118,8 @@ const PhotonLoadBalancing = (function (_super) {
       )
 
       if (!isFound) {
-        Player.create(actor)
+        const isClient = this.myActor().actorNr === roomActor.actorNr
+        Player.create(actor, isClient)
         store.actors[room.name].push(roomActor)
         console.log('🤖', 'Player Added!')
       }
