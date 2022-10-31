@@ -1,49 +1,107 @@
 import { AppInfo, __extends, colors } from './config'
 
-const AppLoadBalancing = (function (_super) {
-  __extends(AppLoadBalancing, _super)
+import { store } from './data'
 
-  function AppLoadBalancing() {
-    var _this =
-      _super.call(
-        this,
-        AppInfo.Wss
-          ? Photon.ConnectionProtocol.Wss
-          : Photon.ConnectionProtocol.Ws,
-        AppInfo.AppId,
-        AppInfo.AppVersion
-      ) || this
-    _this.logger = new Exitgames.Common.Logger('App:')
-    _this.USERCOLORS = colors
-    // uncomment to use Custom Authentication
-    // this.setCustomAuthentication("username=" + "yes" + "&token=" + "yes");
-    _this.output(
-      _this.logger.format(
+import Photon, { Exitgames } from '../libs/Photon-Javascript_SDK'
+
+const PhotonLoadBalancing = (function (_super) {
+  __extends(PhotonLoadBalancing, _super)
+  function PhotonLoadBalancing() {
+    _super.call(
+      this,
+      AppInfo.Wss
+        ? Photon.ConnectionProtocol.Wss
+        : Photon.ConnectionProtocol.Ws,
+      AppInfo.AppId,
+      AppInfo.AppVersion
+    ) || this
+
+    this.logger = new Exitgames.Common.Logger('App:')
+    this.USERCOLORS = colors
+
+    this.output(
+      this.logger.format(
         'Init',
-        _this.getNameServerAddress(),
+        this.getNameServerAddress(),
         AppInfo.AppId,
         AppInfo.AppVersion
       )
     )
-    _this.logger.info(
+
+    this.logger.info(
       'Init',
-      _this.getNameServerAddress(),
+      this.getNameServerAddress(),
       AppInfo.AppId,
       AppInfo.AppVersion
     )
-    _this.setLogLevel(Exitgames.Common.Logger.Level.INFO)
-    _this.myActor().setCustomProperty('color', _this.USERCOLORS[0])
 
-    let { position, rotation, scale } = store.placement
+    this.setLogLevel(Exitgames.Common.Logger.Level.INFO)
+
+    this.myActor().setCustomProperty('color', this.USERCOLORS[0])
 
     // Set custom property for model
-    _this.myActor().setCustomProperty('observer', false)
-    _this.myActor().setCustomProperty('pos', position)
-    _this.myActor().setCustomProperty('rot', rotation)
-    _this.myActor().setCustomProperty('scale', scale)
-    _this.myActor().setCustomProperty('actionWeights', [1.0, 0.0])
-    _this.myActor().setCustomProperty('roomModel', 1.0)
+    const { position, rotation, scale } = store.placement
+    this.myActor().setCustomProperty('observer', false)
+    this.myActor().setCustomProperty('pos', position)
+    this.myActor().setCustomProperty('rot', rotation)
+    this.myActor().setCustomProperty('scale', scale)
+    this.myActor().setCustomProperty('actionWeights', [1.0, 0.0])
+    this.myActor().setCustomProperty('roomModel', 1.0)
 
-    return _this
+    return this
   }
+
+  PhotonLoadBalancing.prototype.start = function () {
+    this.connectToRegionMaster(AppInfo.Region)
+
+    console.log('✅', 'Photon ready')
+  }
+
+  PhotonLoadBalancing.prototype.onError = function (errorCode, errorMsg) {
+    console.log('🔴', 'Photon: Error')
+  }
+
+  PhotonLoadBalancing.prototype.onEvent = function (code, content, actorNr) {}
+
+  PhotonLoadBalancing.prototype.onStateChange = function (state) {}
+
+  PhotonLoadBalancing.prototype.objToStr = function (x) {}
+
+  PhotonLoadBalancing.prototype.updateRoomInfo = function () {}
+
+  PhotonLoadBalancing.prototype.onActorPropertiesChange = function (actor) {}
+
+  PhotonLoadBalancing.prototype.onMyRoomPropertiesChange = function () {}
+
+  PhotonLoadBalancing.prototype.onRoomListUpdate = function (
+    rooms,
+    roomsUpdated,
+    roomsAdded,
+    roomsRemoved
+  ) {}
+
+  PhotonLoadBalancing.prototype.onRoomList = function (rooms) {}
+
+  PhotonLoadBalancing.prototype.onJoinRoom = function () {}
+
+  PhotonLoadBalancing.prototype.onActorJoin = function (actor) {}
+
+  PhotonLoadBalancing.prototype.sendMessage = function (message) {}
+
+  PhotonLoadBalancing.prototype.setupUI = function () {}
+
+  PhotonLoadBalancing.prototype.output = function (str, color) {}
+
+  PhotonLoadBalancing.prototype.updateRoomButtons = function () {}
+
+  /**
+   * Update Model position in space
+   * @param {*} actor
+   */
+  PhotonLoadBalancing.prototype.updateModelInfo = function (actor) {}
+
+  return PhotonLoadBalancing
 })(Photon.LoadBalancing.LoadBalancingClient)
+
+const client = new PhotonLoadBalancing()
+client.start()

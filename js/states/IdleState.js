@@ -22,7 +22,6 @@ class IdleState extends State {
       idleAction.crossFadeFrom(prevAction, 0.5, true)
       idleAction.play()
     } else {
-      console.log({ idleAction })
       idleAction.play()
     }
   }

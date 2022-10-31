@@ -21,8 +21,6 @@ class Joystick {
     this.joyManager = nipplejs.create(options)
 
     this.joyManager['0'].on('move', (evt, data) => {
-      console.log({ angle: data.direction?.angle })
-
       switch (data.direction?.angle) {
         case 'up':
           this.keys.forward = true
@@ -53,12 +51,10 @@ class Joystick {
           this.keys.backward = false
           break
         default:
-          console.log('no angle!')
       }
     })
 
     this.joyManager['0'].on('end', (evt) => {
-      console.log('END')
       this.keys.forward = false
       this.keys.left = false
       this.keys.backward = false

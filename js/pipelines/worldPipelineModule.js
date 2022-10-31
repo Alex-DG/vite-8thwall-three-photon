@@ -5,7 +5,7 @@ export const initWorldPipelineModule = () => {
   const init = () => {
     demo = new Demo()
 
-    console.log('✨', 'World ready')
+    console.log('✅', 'World ready')
   }
 
   const updateWorld = () => {

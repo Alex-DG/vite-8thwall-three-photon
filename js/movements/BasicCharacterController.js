@@ -130,7 +130,6 @@ class BasicCharacterController {
 
     this._position.copy(controlObject.position)
 
-    // console.log('UPDATE > ', this.name)
     this.mixer?.update(time)
   }
 

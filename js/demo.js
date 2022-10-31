@@ -1,13 +1,14 @@
 import * as THREE from 'three'
 
-import { FBXLoader } from 'three/examples/jsm/loaders/FBXLoader.js'
-import { SkeletonUtils } from './libs/SkeletonUtils'
-
 import Stats from 'three/examples/jsm/libs/stats.module'
+import { FBXLoader } from 'three/examples/jsm/loaders/FBXLoader.js'
+
+import { SkeletonUtils } from './libs/SkeletonUtils'
 
 import BasicCharacterController from './movements/BasicCharacterController'
 
-console.log({ SkeletonUtils })
+import './multiplayer'
+
 class Demo {
   constructor() {
     const { scene, camera } = XR8.Threejs.xrScene()
@@ -19,6 +20,9 @@ class Demo {
   }
 
   init() {
+    // const client = new PhotonLoadBalancing()
+    // client.start()
+
     this.stats = Stats()
     document.body.appendChild(this.stats.dom)
 
@@ -64,7 +68,6 @@ class Demo {
       { name: 'run', data: run },
     ]
 
-    console.log({ model })
     this.player1 = new BasicCharacterController({
       scene: this.scene,
       model: SkeletonUtils.clone(model),
