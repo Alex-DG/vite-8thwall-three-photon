@@ -124,7 +124,7 @@ const PhotonLoadBalancing = (function (_super) {
       }
     })
 
-    console.log({ actors: store.actors })
+    console.log('[ Current actors ]', { actors: store.actors })
 
     this.updateRoomButtons()
   }
@@ -134,8 +134,10 @@ const PhotonLoadBalancing = (function (_super) {
 
     const roomName = actor.getRoom().name
     store.actors[roomName] = store.actors[roomName].filter(
-      (a) => a.actorNr !== actorNr
+      (a) => a.actorNr !== actor.actorNr
     )
+
+    console.log('[ Current actors ]', { actors: store.actors })
   }
 
   PhotonLoadBalancing.prototype.sendMessage = function (message) {}
