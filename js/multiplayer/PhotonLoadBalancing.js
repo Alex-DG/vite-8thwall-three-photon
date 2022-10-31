@@ -91,18 +91,13 @@ const PhotonLoadBalancing = (function (_super) {
     roomsAdded,
     roomsRemoved
   ) {
-    console.log('onRoomListUpdate', {
-      rooms,
-      roomsUpdated,
-      roomsAdded,
-      roomsRemoved,
-    })
     Menu.roomList({ rooms })
     this.updateRoomButtons()
   }
 
   PhotonLoadBalancing.prototype.onRoomList = function (rooms) {
     Menu.roomList({ rooms })
+    this.updateRoomButtons()
   }
 
   PhotonLoadBalancing.prototype.onJoinRoom = function (data) {
@@ -129,11 +124,15 @@ const PhotonLoadBalancing = (function (_super) {
 
   PhotonLoadBalancing.prototype.updateRoomButtons = function () {
     console.log('updateRoomButtons')
-    const isJoinedToRoom = this.isJoinedToRoom()
-    const canJoin =
-      this.isInLobby() && !isJoinedToRoom && this.availableRooms().length > 0
 
-    Menu.roomButtons({ canJoin, isJoinedToRoom })
+    const canJoin =
+      this.isInLobby() &&
+      !this.isJoinedToRoom() &&
+      this.availableRooms()?.length > 0
+
+    console.log({ canJoin })
+
+    Menu.roomButtons({ canJoin, isJoinedToRoom: this.isJoinedToRoom() })
   }
 
   /**
