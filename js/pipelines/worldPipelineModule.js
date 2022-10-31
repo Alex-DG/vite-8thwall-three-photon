@@ -1,15 +1,16 @@
-import Demo from '../demo'
+import PhotontMultiplayer from '../multiplayer/PhotonMultiplayer'
+import Player from '../Player'
 
 export const initWorldPipelineModule = () => {
-  let demo
   const init = () => {
-    demo = new Demo()
+    Player.init()
+    PhotontMultiplayer.init()
 
     console.log('✅', 'World ready')
   }
 
   const updateWorld = () => {
-    demo?.render()
+    Player?.render()
   }
 
   return {

@@ -42,7 +42,7 @@ body {
 
   margin: 1em 0;
   padding: 0.7em;
-  width: 70%;
+  width: 85%;
   height: auto;
 
   border: 2px solid #fff;
@@ -55,6 +55,12 @@ body {
   display: flex;
   flex-direction: column;
   gap: 1em;
+}
+
+.menu-states {
+  display: flex;
+  flex-direction: column;
+  color: aliceblue;
 }
 
 .menu-game-btn {

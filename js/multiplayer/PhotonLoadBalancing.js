@@ -4,6 +4,9 @@ import { store } from './data'
 
 import Photon, { Exitgames } from '../libs/Photon-Javascript_SDK'
 
+import Menu from '../ui/Menu'
+import Player from '../Player'
+
 const PhotonLoadBalancing = (function (_super) {
   __extends(PhotonLoadBalancing, _super)
   function PhotonLoadBalancing() {
@@ -52,8 +55,8 @@ const PhotonLoadBalancing = (function (_super) {
   }
 
   PhotonLoadBalancing.prototype.start = function () {
+    this.setupUI()
     this.connectToRegionMaster(AppInfo.Region)
-
     console.log('✅', 'Photon ready')
   }
 
@@ -61,13 +64,22 @@ const PhotonLoadBalancing = (function (_super) {
     console.log('🔴', 'Photon: Error')
   }
 
-  PhotonLoadBalancing.prototype.onEvent = function (code, content, actorNr) {}
+  PhotonLoadBalancing.prototype.onEvent = function (code, content, actorNr) {
+    console.log('onEvent', { code, content, actorNr })
+  }
 
-  PhotonLoadBalancing.prototype.onStateChange = function (state) {}
+  PhotonLoadBalancing.prototype.onStateChange = function (state) {
+    console.log('onStateChange', { state })
+    this.updateRoomButtons()
+    this.updateRoomInfo()
+  }
 
   PhotonLoadBalancing.prototype.objToStr = function (x) {}
 
-  PhotonLoadBalancing.prototype.updateRoomInfo = function () {}
+  PhotonLoadBalancing.prototype.updateRoomInfo = function (data) {
+    console.log('updateRoomInfo', { data })
+    Menu.roomInfo({ clear: true })
+  }
 
   PhotonLoadBalancing.prototype.onActorPropertiesChange = function (actor) {}
 
@@ -78,13 +90,36 @@ const PhotonLoadBalancing = (function (_super) {
     roomsUpdated,
     roomsAdded,
     roomsRemoved
-  ) {}
+  ) {
+    console.log('onRoomListUpdate', {
+      rooms,
+      roomsUpdated,
+      roomsAdded,
+      roomsRemoved,
+    })
+    Menu.roomList({ rooms })
+    this.updateRoomButtons()
+  }
 
-  PhotonLoadBalancing.prototype.onRoomList = function (rooms) {}
+  PhotonLoadBalancing.prototype.onRoomList = function (rooms) {
+    Menu.roomList({ rooms })
+  }
 
-  PhotonLoadBalancing.prototype.onJoinRoom = function () {}
+  PhotonLoadBalancing.prototype.onJoinRoom = function (data) {
+    const state = `state: ${this.isJoinedToRoom() ? 'Joined' : 'none'}`
+    const name = `room: ${this.myRoom().name || 'none'}`
+    Menu.roomInfo({ state, name })
+  }
 
-  PhotonLoadBalancing.prototype.onActorJoin = function (actor) {}
+  PhotonLoadBalancing.prototype.onActorJoin = function (actor) {
+    console.log('🟢', 'Actor Joined', { actor })
+    Player.create(actor)
+    this.updateRoomButtons()
+  }
+
+  PhotonLoadBalancing.prototype.onActorLeave = function (actor) {
+    Player.remove(actor)
+  }
 
   PhotonLoadBalancing.prototype.sendMessage = function (message) {}
 
@@ -92,7 +127,14 @@ const PhotonLoadBalancing = (function (_super) {
 
   PhotonLoadBalancing.prototype.output = function (str, color) {}
 
-  PhotonLoadBalancing.prototype.updateRoomButtons = function () {}
+  PhotonLoadBalancing.prototype.updateRoomButtons = function () {
+    console.log('updateRoomButtons')
+    const isJoinedToRoom = this.isJoinedToRoom()
+    const canJoin =
+      this.isInLobby() && !isJoinedToRoom && this.availableRooms().length > 0
+
+    Menu.roomButtons({ canJoin, isJoinedToRoom })
+  }
 
   /**
    * Update Model position in space
@@ -103,5 +145,4 @@ const PhotonLoadBalancing = (function (_super) {
   return PhotonLoadBalancing
 })(Photon.LoadBalancing.LoadBalancingClient)
 
-const client = new PhotonLoadBalancing()
-client.start()
+export default PhotonLoadBalancing

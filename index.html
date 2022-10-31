@@ -17,17 +17,23 @@
     ></script>
   </head>
   <body>
-    <div id="joystick" class="no-select"></div>
+    <!-- <div id="joystick" class="no-select"></div> -->
 
     <div class="menu">
       <button id="visibility-btn">Hide</button>
       <div id="menu-container">
         <div class="menu-game">
-          <select id="gamelist"></select>
+          <select id="game-list" disabled></select>
+
+          <div class="menu-states">
+            <div id="client-state">state: none</div>
+            <div id="client-room">room: none</div>
+          </div>
 
           <div class="menu-game-btn">
-            <button disabled>Join</button><button disabled>New</button
-            ><button disabled>Leave</button>
+            <button id="join-btn" disabled>Join</button
+            ><button id="create-btn">Create</button
+            ><button id="leave-btn" disabled>Leave</button>
           </div>
         </div>
       </div>

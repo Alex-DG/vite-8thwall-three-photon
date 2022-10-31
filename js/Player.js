@@ -7,21 +7,17 @@ import { SkeletonUtils } from './libs/SkeletonUtils'
 
 import BasicCharacterController from './movements/BasicCharacterController'
 
-import './multiplayer'
-
-class Demo {
-  constructor() {
+class _Player {
+  init() {
     const { scene, camera } = XR8.Threejs.xrScene()
     this.scene = scene
 
     this.camera = camera
 
-    this.player = []
+    this.players = []
 
-    this.init()
-  }
+    this.isRunning = false
 
-  init() {
     // const client = new PhotonLoadBalancing()
     // client.start()
 
@@ -70,51 +66,66 @@ class Demo {
       { name: 'run', data: run },
     ]
 
-    // this.player1 = new BasicCharacterController({
-    //   scene: this.scene,
-    //   model: SkeletonUtils.clone(model),
-    //   name: 'player1',
-    //   animations,
-    // })
-    // this.player2 = new BasicCharacterController({
-    //   player2: true,
-    //   scene: this.scene,
-    //   model: SkeletonUtils.clone(model),
-    //   name: 'player2',
-    //   animations,
-    // })
+    this.isRunning = true
   }
 
-  createPlayer({ name }) {
+  getName(actorNr) {
+    const name = `player-${actorNr}`
+    return name
+  }
+
+  create(actor) {
+    const actorNr = actor.actorNr
+    const name = this.getName(actorNr)
+
     const model = SkeletonUtils.clone(this.model)
+    model.userData.actorNr = actorNr
     const animations = this.animations
 
     const player = new BasicCharacterController({
       scene: this.scene,
-      name: name,
+      name,
       model,
       animations,
     })
     this.players.push(player)
   }
 
+  remove(actor) {
+    const actorNr = actor.actorNr
+    const name = this.getName(actorNr)
+
+    console.log({ players: this.players })
+
+    this.players = this.players.filter((p) => {
+      if (p.model.name === name) {
+        p.dispose()
+        this.scene.remove(p.model)
+
+        return false
+      }
+      return true
+    })
+
+    console.log('✨ After FILTERING = ', { players: this.players })
+  }
+
   render() {
+    if (!this.isRunning) return
+
     this.stats.begin()
 
     const elapsedTime = this.time.getElapsedTime()
     const deltaTime = elapsedTime - this.previousTime
     this.previousTime = elapsedTime
 
-    this.player1?.update(deltaTime)
-    // this.player2?.update(deltaTime)
+    // this.player1?.update(deltaTime)
+
+    this.players?.forEach((p) => p?.update(deltaTime))
 
     this.stats.end()
   }
 }
 
-// const env = process.env.NODE_ENV
-// window.addEventListener('DOMContentLoaded', () => {
-//   const demo = new Demo()
-//   window.demo = demo
-// })
-export default Demo
+const Player = new _Player()
+export default Player

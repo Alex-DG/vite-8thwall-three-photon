@@ -24,6 +24,8 @@ class BasicCharacterController {
       new BasicCharacterControllerProxy(this.animations)
     )
 
+    this.isRunning = false
+
     this.init()
   }
 
@@ -52,6 +54,25 @@ class BasicCharacterController {
     })
 
     this.stateMachine.setState('idle')
+
+    this.isRunning = true
+  }
+
+  dispose() {
+    Object.keys(this.animations).forEach((key) => {
+      const action = this.animations[key].action
+      action.stop()
+    })
+
+    this.mixer.uncacheRoot(this.target)
+
+    this.model?.traverse((o) => {
+      if (o.material) o.material.dispose()
+      if (o.geometry) o.geometry.dispose()
+      if (o.texture) o.texture.dispose()
+    })
+
+    this.input.dispose()
   }
 
   /**
@@ -60,7 +81,7 @@ class BasicCharacterController {
    * @param time - seconds
    */
   update(time) {
-    if (!this.target) return
+    if (!this.target || !this.isRunning) return
 
     this.stateMachine.update(time, this.input)
 

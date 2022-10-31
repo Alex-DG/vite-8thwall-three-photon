@@ -13,18 +13,24 @@ class BasicCharacterControllerInput {
       space: false,
       shift: false,
     }
-    document.addEventListener(
-      'keydown',
-      (event) => this.onKeyDown(event),
-      false
-    )
 
-    document.addEventListener('keyup', (event) => this.onKeyUp(event), false)
+    this.onKeyDown = this.onKeyDown.bind(this)
+    this.onKeyUp = this.onKeyUp.bind(this)
+
+    document.addEventListener('keydown', this.onKeyDown, false)
+    document.addEventListener('keyup', this.onKeyUp, false)
 
     this.josytick = new Joystick({
       keys: this.keys,
       isPlayer2,
     })
+  }
+
+  dispose() {
+    this.josytick.remove()
+
+    document.removeEventListener('keydown', this.onKeyDown)
+    document.removeEventListener('keyup', this.onKeyUp)
   }
 
   onKeyDown({ keyCode }) {
