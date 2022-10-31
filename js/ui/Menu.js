@@ -8,7 +8,7 @@ class _Menu {
 
     try {
       if (this.client.isInLobby()) {
-        const roomName = undefined // the server will assign a GUID as name
+        const roomName = `room-${this.client.availableRooms().length}` // the server will assign a GUID as name
         this.client.createRoom(roomName)
       }
     } catch (error) {
@@ -39,8 +39,11 @@ class _Menu {
   //////////////////////////////////////////////////////////////////////
 
   roomInfo({ state, name, clear }) {
-    this.clientState.innerText = clear ? 'state: none' : state
-    this.clientRoom.innerText = clear ? 'room: none' : name
+    this.clientState.innerText = clear
+      ? 'Client state: -'
+      : `Client state: ${state}`
+    this.clientRoom.innerText = clear ? 'Room name: -' : `Room name: ${name}`
+    this.clientHeader.innerText = clear ? '🔴' : '🟢'
   }
 
   roomList({ rooms }) {
@@ -124,6 +127,7 @@ class _Menu {
 
     this.clientState = document.getElementById('client-state')
     this.clientRoom = document.getElementById('client-room')
+    this.clientHeader = document.getElementById('client-header')
 
     this.gameList = document.getElementById('game-list')
   }

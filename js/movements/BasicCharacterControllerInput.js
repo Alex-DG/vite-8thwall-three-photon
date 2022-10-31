@@ -4,7 +4,7 @@ import Joystick from '../joystick'
  * Keyboard listeners on press keys up and down
  */
 class BasicCharacterControllerInput {
-  constructor(isPlayer2) {
+  constructor() {
     this.keys = {
       forward: false,
       backward: false,
@@ -22,7 +22,6 @@ class BasicCharacterControllerInput {
 
     this.josytick = new Joystick({
       keys: this.keys,
-      isPlayer2,
     })
   }
 

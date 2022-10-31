@@ -106,8 +106,8 @@ const PhotonLoadBalancing = (function (_super) {
   }
 
   PhotonLoadBalancing.prototype.onJoinRoom = function (data) {
-    const state = `state: ${this.isJoinedToRoom() ? 'Joined' : 'none'}`
-    const name = `room: ${this.myRoom().name || 'none'}`
+    const state = this.isJoinedToRoom() ? 'Joined' : 'none'
+    const name = this.myRoom().name
     Menu.roomInfo({ state, name })
   }
 

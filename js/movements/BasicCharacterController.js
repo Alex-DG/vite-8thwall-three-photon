@@ -19,7 +19,7 @@ class BasicCharacterController {
     this.velocity = new THREE.Vector3(0, 0, 0)
     this._position = new THREE.Vector3()
 
-    this.input = new BasicCharacterControllerInput(this.params.player2)
+    this.input = new BasicCharacterControllerInput()
     this.stateMachine = new CharacterFSM(
       new BasicCharacterControllerProxy(this.animations)
     )
