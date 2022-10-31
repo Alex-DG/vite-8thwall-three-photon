@@ -46,6 +46,13 @@ class _Player {
     this.loadAnimatedModel()
   }
 
+  resetPosition(actor) {
+    const player = this.players.find(
+      (p) => p.name === this.getName(actor.actorNr)
+    )
+    player?.resetPosition()
+  }
+
   async loadAnimatedModel() {
     const loader = new FBXLoader()
     loader.setPath('../assets/models/girl/')

@@ -55,6 +55,14 @@ class BasicCharacterController {
 
     this.stateMachine.setState('idle')
 
+    this.intialPosition = new THREE.Vector3()
+    this.intialRotation = new THREE.Euler()
+
+    console.log({ fbx })
+
+    this.intialPosition.copy(this.target.position)
+    this.intialRotation.copy(this.target.rotation)
+
     this.isRunning = true
   }
 
@@ -73,6 +81,11 @@ class BasicCharacterController {
     })
 
     this.input.dispose()
+  }
+
+  resetPosition() {
+    this.target?.position.copy(this.intialPosition)
+    this.target?.rotation.copy(this.intialRotation)
   }
 
   /**

@@ -1,3 +1,5 @@
+import Player from '../Player'
+
 class _Menu {
   onChangeMenuVisibility() {
     this.action[this.isVisible]()
@@ -36,6 +38,10 @@ class _Menu {
     }
   }
 
+  onResetPos() {
+    Player.resetPosition(this.client.myActor())
+  }
+
   //////////////////////////////////////////////////////////////////////
 
   roomInfo({ state, name, clear }) {
@@ -44,6 +50,7 @@ class _Menu {
       : `Client state: ${state}`
     this.clientRoom.innerText = clear ? 'Room name: -' : `Room name: ${name}`
     this.clientHeader.innerText = clear ? '🔴' : '🟢'
+    this.clientBtns.style.display = clear ? 'none' : 'flex'
   }
 
   roomList({ rooms }) {
@@ -92,6 +99,7 @@ class _Menu {
     this.onCreateGame = this.onCreateGame.bind(this)
     this.onJoinGame = this.onJoinGame.bind(this)
     this.onLeaveGame = this.onLeaveGame.bind(this)
+    this.onResetPos = this.onResetPos.bind(this)
   }
 
   init(options) {
@@ -124,6 +132,10 @@ class _Menu {
 
     this.leaveGame = document.getElementById('leave-btn')
     this.leaveGame.addEventListener('click', this.onLeaveGame)
+
+    this.clientBtns = document.getElementById('client-btns')
+    this.resetPosBtn = document.getElementById('reset-pos-btn')
+    this.resetPosBtn.addEventListener('click', this.onResetPos)
 
     this.clientState = document.getElementById('client-state')
     this.clientRoom = document.getElementById('client-room')
