@@ -11,14 +11,20 @@ class BasicCharacterController {
     this.name = params.name
     this.model = params.model
     this.modelAnimations = params.animations
-    this.isClient = params.isClient
+    this.isClient = params.model.userData.isClient
+    this.client = params.client
+
+    this.frameCount = 0
+    this.frequency = 3
 
     this.animations = {}
 
     this.decceleration = new THREE.Vector3(-0.0005, -0.0001, -5.0)
     this.acceleration = new THREE.Vector3(1.0, 0.25, 50.0)
     this.velocity = new THREE.Vector3(0, 0, 0)
+
     this._position = new THREE.Vector3()
+    this._rotation = new THREE.Vector3()
 
     if (this.isClient) this.input = new BasicCharacterControllerInput()
 
@@ -86,6 +92,17 @@ class BasicCharacterController {
   resetPosition() {
     this.target?.position.copy(this.intialPosition)
     this.target?.rotation.copy(this.intialRotation)
+  }
+
+  updateRemote() {
+    this.frameCount += 1
+
+    if (this.frameCount === this.frequency) {
+      this.client.myActor().setCustomProperty('pos', this._position)
+      this.client.myActor().setCustomProperty('rot', this._rotation)
+
+      this.frameCount = 0
+    }
   }
 
   /**
@@ -163,20 +180,11 @@ class BasicCharacterController {
     controlObject.position.add(sideways)
 
     this._position.copy(controlObject.position)
+    this._rotation.copy(controlObject.rotation)
 
     this.mixer?.update(time)
-  }
 
-  /**
-   * Getter
-   */
-  get rotation() {
-    if (!this.target) return new THREE.Quaternion()
-    return this.target.quaternion
-  }
-
-  get position() {
-    return this._position
+    this.updateRemote()
   }
 }
 

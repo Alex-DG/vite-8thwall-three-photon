@@ -1,7 +1,5 @@
 export const store = {
-  isMyPlayerAdded: false,
   actors: [],
-  rooms: [],
 
   // OLD
   connectOnStart: false,

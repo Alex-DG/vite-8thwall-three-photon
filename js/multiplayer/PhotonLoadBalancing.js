@@ -69,7 +69,6 @@ const PhotonLoadBalancing = (function (_super) {
   }
 
   PhotonLoadBalancing.prototype.onStateChange = function (state) {
-    console.log('onStateChange', { state })
     this.updateRoomButtons()
     this.updateRoomInfo()
   }
@@ -77,11 +76,12 @@ const PhotonLoadBalancing = (function (_super) {
   PhotonLoadBalancing.prototype.objToStr = function (x) {}
 
   PhotonLoadBalancing.prototype.updateRoomInfo = function (data) {
-    console.log('updateRoomInfo', { data })
     Menu.roomInfo({ clear: true })
   }
 
-  PhotonLoadBalancing.prototype.onActorPropertiesChange = function (actor) {}
+  PhotonLoadBalancing.prototype.onActorPropertiesChange = function (actor) {
+    this.updateModelInfo(actor)
+  }
 
   PhotonLoadBalancing.prototype.onMyRoomPropertiesChange = function () {}
 
@@ -107,8 +107,6 @@ const PhotonLoadBalancing = (function (_super) {
   }
 
   PhotonLoadBalancing.prototype.onActorJoin = function (actor) {
-    console.log('🟢', 'Actor Joined', { actor })
-
     Object.keys(this.myRoomActors()).forEach((key) => {
       const roomActor = this.myRoomActors()[key]
 
@@ -119,29 +117,23 @@ const PhotonLoadBalancing = (function (_super) {
       )
 
       if (!isFound) {
-        const isClient = this.myActor().actorNr === roomActor.actorNr
-        Player.create(roomActor, isClient)
+        const client = this
+        Player.create(roomActor, client)
         store.actors[room.name].push(roomActor)
         console.log('🤖', 'Player Added!', roomActor.actorNr)
       }
     })
 
-    console.log('[ Current actors ]', { actors: store.actors })
-
     this.updateRoomButtons()
   }
 
   PhotonLoadBalancing.prototype.onActorLeave = function (actor) {
-    console.log('ACTOR LEAVING!')
-
     Player.remove(actor)
 
     const roomName = actor.getRoom().name
     store.actors[roomName] = store.actors[roomName].filter(
       (a) => a.actorNr !== actor.actorNr
     )
-
-    console.log('[ Current actors ]', { actors: store.actors })
   }
 
   PhotonLoadBalancing.prototype.sendMessage = function (message) {}
@@ -151,8 +143,6 @@ const PhotonLoadBalancing = (function (_super) {
   PhotonLoadBalancing.prototype.output = function (str, color) {}
 
   PhotonLoadBalancing.prototype.updateRoomButtons = function () {
-    console.log('updateRoomButtons')
-
     const canJoin =
       this.isInLobby() &&
       !this.isJoinedToRoom() &&
@@ -165,7 +155,21 @@ const PhotonLoadBalancing = (function (_super) {
    * Update Model position in space
    * @param {*} actor
    */
-  PhotonLoadBalancing.prototype.updateModelInfo = function (actor) {}
+  PhotonLoadBalancing.prototype.updateModelInfo = function (actor) {
+    console.log('|||||||| updateModelInfo')
+    if (this.isJoinedToRoom()) {
+      Player?.players?.forEach((p) => {
+        const model = p.model
+        if (model.userData.actorNr === actor.actorNr) {
+          const pos = actor.getCustomProperty('pos')
+          const rot = actor.getCustomProperty('rot')
+
+          model.position.set(pos.x, pos.y, pos.z)
+          model.rotation.set(rot.x, rot.y, rot.z)
+        }
+      })
+    }
+  }
 
   return PhotonLoadBalancing
 })(Photon.LoadBalancing.LoadBalancingClient)
