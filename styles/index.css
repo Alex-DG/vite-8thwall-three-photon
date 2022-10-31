@@ -22,9 +22,50 @@ body {
   outline: none;
 }
 
-#mobile-ui {
-  position: fixed;
-  touch-action: manipulation;
+.menu {
+  padding-top: 1em;
+  position: absolute;
+  z-index: 1;
+  top: 0;
+  left: 0;
+
+  width: 100%;
+  height: auto;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+#menu-container {
+  display: block;
+
+  margin: 1em 0;
+  padding: 0.7em;
+  width: 70%;
+  height: auto;
+
+  border: 2px solid #fff;
+  border-radius: 4px;
+
+  background-color: rgba(42, 41, 40, 0.5);
+}
+
+.menu-game {
+  display: flex;
+  flex-direction: column;
+  gap: 1em;
+}
+
+.menu-game-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: row;
+  flex-wrap: wrap;
+
+  width: 100%;
+  gap: 0.5em;
 }
 
 .no-select {

@@ -8,6 +8,7 @@ import { SkeletonUtils } from './libs/SkeletonUtils'
 import BasicCharacterController from './movements/BasicCharacterController'
 
 import './multiplayer'
+import AppUI from './ui'
 
 class Demo {
   constructor() {
@@ -19,7 +20,11 @@ class Demo {
     this.init()
   }
 
-  init() {
+  setAppUI() {
+    this.appUI = new AppUI()
+  }
+
+  setSceneContent() {
     // const client = new PhotonLoadBalancing()
     // client.start()
 
@@ -46,6 +51,11 @@ class Demo {
     // this.scene.add(this.box)
 
     this.loadAnimatedModel()
+  }
+
+  init() {
+    this.setAppUI()
+    this.setSceneContent()
   }
 
   async loadAnimatedModel() {
