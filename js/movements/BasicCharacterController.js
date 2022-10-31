@@ -58,8 +58,6 @@ class BasicCharacterController {
     this.intialPosition = new THREE.Vector3()
     this.intialRotation = new THREE.Euler()
 
-    console.log({ fbx })
-
     this.intialPosition.copy(this.target.position)
     this.intialRotation.copy(this.target.rotation)
 

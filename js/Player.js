@@ -6,6 +6,7 @@ import { FBXLoader } from 'three/examples/jsm/loaders/FBXLoader.js'
 import { SkeletonUtils } from './libs/SkeletonUtils'
 
 import BasicCharacterController from './movements/BasicCharacterController'
+import { store } from './multiplayer/data'
 
 class _Player {
   init() {
@@ -84,6 +85,7 @@ class _Player {
   create(actor) {
     const actorNr = actor.actorNr
     const name = this.getName(actorNr)
+    const roomName = actor.getRoom()?.name || ''
 
     const model = SkeletonUtils.clone(this.model)
     model.userData.actorNr = actorNr
@@ -101,6 +103,7 @@ class _Player {
   remove(actor) {
     const actorNr = actor.actorNr
     const name = this.getName(actorNr)
+    const roomName = actor.getRoom()?.name || ''
 
     console.log({ players: this.players })
 
@@ -113,8 +116,6 @@ class _Player {
       }
       return true
     })
-
-    console.log('✨ After FILTERING = ', { players: this.players })
   }
 
   render() {

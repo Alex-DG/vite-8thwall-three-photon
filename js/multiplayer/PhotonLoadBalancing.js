@@ -108,12 +108,34 @@ const PhotonLoadBalancing = (function (_super) {
 
   PhotonLoadBalancing.prototype.onActorJoin = function (actor) {
     console.log('🟢', 'Actor Joined', { actor })
-    Player.create(actor)
+
+    Object.keys(this.myRoomActors()).forEach((key) => {
+      const roomActor = this.myRoomActors()[key]
+      const room = roomActor.getRoom()
+
+      const isFound = store.actors[room.name].some(
+        (ra) => ra.actorNr === roomActor.actorNr
+      )
+
+      if (!isFound) {
+        Player.create(actor)
+        store.actors[room.name].push(roomActor)
+        console.log('🤖', 'Player Added!')
+      }
+    })
+
+    console.log({ actors: store.actors })
+
     this.updateRoomButtons()
   }
 
   PhotonLoadBalancing.prototype.onActorLeave = function (actor) {
     Player.remove(actor)
+
+    const roomName = actor.getRoom().name
+    store.actors[roomName] = store.actors[roomName].filter(
+      (a) => a.actorNr !== actorNr
+    )
   }
 
   PhotonLoadBalancing.prototype.sendMessage = function (message) {}
@@ -129,8 +151,6 @@ const PhotonLoadBalancing = (function (_super) {
       this.isInLobby() &&
       !this.isJoinedToRoom() &&
       this.availableRooms()?.length > 0
-
-    console.log({ canJoin })
 
     Menu.roomButtons({ canJoin, isJoinedToRoom: this.isJoinedToRoom() })
   }
