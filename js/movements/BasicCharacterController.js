@@ -80,7 +80,7 @@ class BasicCharacterController {
       if (o.texture) o.texture.dispose()
     })
 
-    this.input.dispose()
+    this.input?.dispose()
   }
 
   resetPosition() {

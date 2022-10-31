@@ -111,6 +111,7 @@ const PhotonLoadBalancing = (function (_super) {
 
     Object.keys(this.myRoomActors()).forEach((key) => {
       const roomActor = this.myRoomActors()[key]
+
       const room = roomActor.getRoom()
 
       const isFound = store.actors[room.name].some(
@@ -119,9 +120,9 @@ const PhotonLoadBalancing = (function (_super) {
 
       if (!isFound) {
         const isClient = this.myActor().actorNr === roomActor.actorNr
-        Player.create(actor, isClient)
+        Player.create(roomActor, isClient)
         store.actors[room.name].push(roomActor)
-        console.log('🤖', 'Player Added!')
+        console.log('🤖', 'Player Added!', roomActor.actorNr)
       }
     })
 
@@ -131,6 +132,8 @@ const PhotonLoadBalancing = (function (_super) {
   }
 
   PhotonLoadBalancing.prototype.onActorLeave = function (actor) {
+    console.log('ACTOR LEAVING!')
+
     Player.remove(actor)
 
     const roomName = actor.getRoom().name

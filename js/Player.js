@@ -82,12 +82,14 @@ class _Player {
   }
 
   create(actor, isClient) {
+    // console.log('CREATE >', { actor })
     const actorNr = actor.actorNr
     const name = this.getName(actorNr)
-    const roomName = actor.getRoom()?.name || ''
 
     const model = SkeletonUtils.clone(this.model)
     model.userData.actorNr = actorNr
+    model.userData.isClient = isClient
+
     const animations = this.animations
 
     const player = new BasicCharacterController({
@@ -98,17 +100,20 @@ class _Player {
       isClient,
     })
     this.players.push(player)
+
+    // console.log({ players: this.players, isClient })
   }
 
   remove(actor) {
     const actorNr = actor.actorNr
     const name = this.getName(actorNr)
-    const roomName = actor.getRoom()?.name || ''
 
-    console.log({ players: this.players })
+    console.log('Remove : ', name)
 
     this.players = this.players.filter((p) => {
+      console.log('loop', p.model.name)
       if (p.model.name === name) {
+        console.log('loop remove', p.model.name)
         p.dispose()
         this.scene.remove(p.model)
 
@@ -116,6 +121,8 @@ class _Player {
       }
       return true
     })
+
+    console.log({ scene: this.scene })
   }
 
   render() {
