@@ -8,11 +8,6 @@ class _Menu {
 
   onChangeGameName(event) {
     const value = event.target.value
-    console.log({
-      value: !!value,
-      isJoinedToRoom: this.client.isJoinedToRoom(),
-      test: !this.client.isJoinedToRoom() && !!value,
-    })
 
     if (!this.client.isJoinedToRoom()) {
       this.joinGame.disabled = !!!value

@@ -9,7 +9,7 @@ class Joystick {
 
     const zone = document.createElement('div')
     zone.setAttribute('id', this.id)
-    zone.setAttribute('class', 'no-select')
+    zone.setAttribute('class', 'no-select disable-doubletap-to-zoom')
     document.body.appendChild(zone)
 
     this.options = {
@@ -31,6 +31,10 @@ class Joystick {
     this.joyManager = nipplejs.create(this.options)
 
     this.joyManager['0'].on('move', (evt, data) => {
+      console.log({ data })
+      const force = data.force
+      this.keys.shift = force > 1.8
+
       switch (data.direction?.angle) {
         case 'up':
           this.keys.forward = true
