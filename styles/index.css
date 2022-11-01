@@ -10,6 +10,10 @@ body {
   background-color: rgb(30, 27, 31);
 }
 
+.disable-doubletap-to-zoom {
+  touch-action: none;
+}
+
 #experience {
   position: fixed;
 
@@ -49,6 +53,8 @@ body {
   border-radius: 8px;
 
   background-color: rgba(42, 41, 40, 0.5);
+
+  touch-action: manipulation;
 }
 
 .menu-game {
