@@ -54,6 +54,7 @@ class _Menu {
       ? 'Client state: -'
       : `Client state: ${state}`
     this.clientRoom.innerText = clear ? 'Room name: -' : `Room name: ${name}`
+
     this.clientHeader.innerText = clear ? '🔴' : '🟢'
     this.clientBtns.style.display = clear ? 'none' : 'flex'
   }

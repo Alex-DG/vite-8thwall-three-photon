@@ -37,8 +37,6 @@ class FiniteStateMachine {
     }
 
     const state = new this.states[name](this)
-
-    console.log({ state })
     this.currentState = state
     state.enter(prevState)
   }

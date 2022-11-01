@@ -1,5 +1,4 @@
 import * as THREE from 'three'
-
 import Stats from 'three/examples/jsm/libs/stats.module'
 import { FBXLoader } from 'three/examples/jsm/loaders/FBXLoader.js'
 
@@ -11,15 +10,10 @@ class _Player {
   init() {
     const { scene, camera } = XR8.Threejs.xrScene()
     this.scene = scene
-
     this.camera = camera
 
     this.players = []
-
     this.isRunning = false
-
-    // const client = new PhotonLoadBalancing()
-    // client.start()
 
     this.stats = Stats()
     document.body.appendChild(this.stats.dom)
@@ -37,13 +31,7 @@ class _Player {
     const ambientLight = new THREE.AmbientLight(0xffffff, 0.7)
     this.scene.add(ambientLight)
 
-    // this.box = new THREE.Mesh(
-    //   new THREE.BoxGeometry(1, 1, 1),
-    //   new THREE.MeshNormalMaterial()
-    // )
-    // this.scene.add(this.box)
-
-    this.loadAnimatedModel()
+    this.loadAssets()
   }
 
   resetPosition(actor) {
@@ -53,13 +41,14 @@ class _Player {
     player?.resetPosition()
   }
 
-  async loadAnimatedModel() {
+  async loadAssets() {
     const loader = new FBXLoader()
     loader.setPath('../assets/models/girl/')
 
-    // Prep character
+    // Character
     this.model = await loader.loadAsync('eve_j_gonzales.fbx')
-    // Prep animations
+
+    // Animations
     const [walk, idle, dance, run] = await Promise.all([
       loader.loadAsync('walk.fbx'),
       loader.loadAsync('idle.fbx'),
@@ -81,39 +70,30 @@ class _Player {
     return name
   }
 
-  create(actor, isClient) {
-    // console.log('CREATE >', { actor })
-    const actorNr = actor.actorNr
-    const name = this.getName(actorNr)
-
-    const model = SkeletonUtils.clone(this.model)
-    model.userData.actorNr = actorNr
-    model.userData.isClient = isClient
-
+  create(actor, client) {
     const animations = this.animations
+    const name = this.getName(actor.actorNr)
+    const model = SkeletonUtils.clone(this.model)
+
+    model.userData.actorNr = actor.actorNr
+    model.userData.isClient = client.myActor().actorNr === actor.actorNr
 
     const player = new BasicCharacterController({
-      scene: this.scene,
       name,
       model,
       animations,
-      isClient,
+      client,
     })
-    this.players.push(player)
 
-    // console.log({ players: this.players, isClient })
+    this.players.push(player)
   }
 
   remove(actor) {
     const actorNr = actor.actorNr
     const name = this.getName(actorNr)
 
-    console.log('Remove : ', name)
-
     this.players = this.players.filter((p) => {
-      console.log('loop', p.model.name)
       if (p.model.name === name) {
-        console.log('loop remove', p.model.name)
         p.dispose()
         this.scene.remove(p.model)
 
@@ -121,8 +101,6 @@ class _Player {
       }
       return true
     })
-
-    console.log({ scene: this.scene })
   }
 
   render() {
@@ -133,8 +111,6 @@ class _Player {
     const elapsedTime = this.time.getElapsedTime()
     const deltaTime = elapsedTime - this.previousTime
     this.previousTime = elapsedTime
-
-    // this.player1?.update(deltaTime)
 
     this.players?.forEach((p) => p?.update(deltaTime))
 
