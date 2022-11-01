@@ -24,14 +24,37 @@ class _Menu {
     console.log('✨', '[ Create room ]')
 
     try {
-      this.gameListInput.value = ''
       if (this.client.isInLobby()) {
         const roomName = `room-${this.client.availableRooms().length}` // the server will assign a GUID as name
         createRoom(roomName)
         this.client.createRoom(roomName)
+        this.gameListInput.value = ''
       }
     } catch (error) {
       console.log('🔴 onCreateGame', { error })
+    }
+  }
+
+  onObserveGame() {
+    console.log('✨', '[ Observe room ]')
+
+    try {
+      const index = this.gameList.selectedIndex
+      const roomName =
+        this.gameListInput.value || this.gameList.options[index].text
+
+      const gameIndex = [...this.gameList.children].findIndex(
+        (c) => c.label === roomName
+      )
+      this.gameList.selectedIndex = gameIndex
+
+      createRoom(roomName)
+
+      this.client.myActor().setCustomProperty('observer', true)
+      this.client.joinRoom(roomName)
+      this.gameListInput.value = ''
+    } catch (error) {
+      console.log('🔴 onObserveGame', { error })
     }
   }
 
@@ -39,12 +62,19 @@ class _Menu {
     console.log('✨', '[ Join room ]')
 
     try {
-      this.gameListInput.value = ''
       const index = this.gameList.selectedIndex
-      const roomName = this.gameList.options[index].text
+      const roomName =
+        this.gameListInput.value || this.gameList.options[index].text
+
+      const gameIndex = [...this.gameList.children].findIndex(
+        (c) => c.label === roomName
+      )
+      this.gameList.selectedIndex = gameIndex
+
       createRoom(roomName)
 
       this.client.joinRoom(roomName)
+      this.gameListInput.value = ''
     } catch (error) {
       console.log('🔴 onJoinGame', { error })
     }
@@ -65,13 +95,13 @@ class _Menu {
 
   //////////////////////////////////////////////////////////////////////
 
-  roomInfo({ state, name, clear }) {
+  roomInfo({ state, name, isObserver, clear }) {
     this.clientState.innerText = clear
       ? 'Client state: -'
       : `Client state: ${state}`
     this.clientRoom.innerText = clear ? 'Room name: -' : `Room name: ${name}`
 
-    this.clientHeader.innerText = clear ? '🔴' : '🟢'
+    this.clientHeader.innerText = clear ? '🔴' : isObserver ? '🟢🤓' : '🟢🤖'
     this.clientBtns.style.display = clear ? 'none' : 'flex'
   }
 
@@ -102,7 +132,6 @@ class _Menu {
         item.attributes['value'] = r.name
         item.textContent = r.name
 
-        console.log({ children: this.gameList.children, name: r.name })
         this.gameList.appendChild(item)
         this.gameList.selectedIndex = index
       }
@@ -111,6 +140,7 @@ class _Menu {
 
   roomButtons({ canJoin, isJoinedToRoom }) {
     this.joinGame.disabled = !canJoin
+    this.observeGame.disabled = !canJoin
     this.leaveGame.disabled = !isJoinedToRoom
   }
 
@@ -143,6 +173,7 @@ class _Menu {
     this.onCreateGame = this.onCreateGame.bind(this)
     this.onJoinGame = this.onJoinGame.bind(this)
     this.onLeaveGame = this.onLeaveGame.bind(this)
+    this.onObserveGame = this.onObserveGame.bind(this)
     this.onResetPos = this.onResetPos.bind(this)
 
     this.onChangeGameName = this.onChangeGameName.bind(this)
@@ -179,6 +210,9 @@ class _Menu {
 
     this.leaveGame = document.getElementById('leave-btn')
     this.leaveGame.addEventListener('click', this.onLeaveGame)
+
+    this.observeGame = document.getElementById('observe-btn')
+    this.observeGame.addEventListener('click', this.onObserveGame)
 
     this.clientBtns = document.getElementById('client-btns')
     this.resetPosBtn = document.getElementById('reset-pos-btn')

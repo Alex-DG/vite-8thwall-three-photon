@@ -41,6 +41,7 @@ const PhotonLoadBalancing = (function (_super) {
     this.setLogLevel(Exitgames.Common.Logger.Level.INFO)
 
     this.myActor().setCustomProperty('color', this.USERCOLORS[0])
+    this.myActor().setCustomProperty('observer', false)
 
     return this
   }
@@ -94,7 +95,8 @@ const PhotonLoadBalancing = (function (_super) {
   PhotonLoadBalancing.prototype.onJoinRoom = function (data) {
     const state = this.isJoinedToRoom() ? 'Joined' : 'none'
     const name = this.myRoom().name
-    Menu.roomInfo({ state, name })
+    const isObserver = this.myActor().getCustomProperty('observer')
+    Menu.roomInfo({ state, name, isObserver })
     Menu.room({ name })
   }
 
@@ -115,9 +117,15 @@ const PhotonLoadBalancing = (function (_super) {
 
       if (!isFound) {
         const client = this
-        Player.create(roomActor, client)
-        store.actors[room.name].push(roomActor)
-        console.log('🤖', 'Player Added!', roomActor.actorNr)
+        const isObserver = roomActor.getCustomProperty('observer')
+        if (isObserver) {
+          store.actors[room.name].push(roomActor)
+          console.log('🤓', 'Observer Added!', roomActor.actorNr)
+        } else {
+          Player.create(roomActor, client)
+          store.actors[room.name].push(roomActor)
+          console.log('🤖', 'Player Added!', roomActor.actorNr)
+        }
       }
     })
 
@@ -125,7 +133,10 @@ const PhotonLoadBalancing = (function (_super) {
   }
 
   PhotonLoadBalancing.prototype.onActorLeave = function (actor) {
-    Player.remove(actor)
+    if (!actor.getCustomProperty('observer')) {
+      // If not an observer remove the 3D player
+      Player.remove(actor)
+    }
 
     const roomName = actor.getRoom().name
     store.actors[roomName] = store.actors[roomName].filter(
