@@ -42,15 +42,6 @@ const PhotonLoadBalancing = (function (_super) {
 
     this.myActor().setCustomProperty('color', this.USERCOLORS[0])
 
-    // Set custom property for model
-    const { position, rotation, scale } = store.placement
-    this.myActor().setCustomProperty('observer', false)
-    this.myActor().setCustomProperty('pos', position)
-    this.myActor().setCustomProperty('rot', rotation)
-    this.myActor().setCustomProperty('scale', scale)
-    this.myActor().setCustomProperty('actionWeights', [1.0, 0.0])
-    this.myActor().setCustomProperty('roomModel', 1.0)
-
     return this
   }
 
@@ -156,16 +147,20 @@ const PhotonLoadBalancing = (function (_super) {
    * @param {*} actor
    */
   PhotonLoadBalancing.prototype.updateModelInfo = function (actor) {
-    console.log('|||||||| updateModelInfo')
     if (this.isJoinedToRoom()) {
       Player?.players?.forEach((p) => {
         const model = p.model
         if (model.userData.actorNr === actor.actorNr) {
-          const pos = actor.getCustomProperty('pos')
-          const rot = actor.getCustomProperty('rot')
+          const position = actor.getCustomProperty('position')
+          const rotation = actor.getCustomProperty('rotation')
+          const scale = actor.getCustomProperty('scale')
 
-          model.position.set(pos.x, pos.y, pos.z)
-          model.rotation.set(rot.x, rot.y, rot.z)
+          model.position.copy(position)
+          model.rotation.copy(rotation)
+          model.scale.copy(scale)
+
+          const input = actor.getCustomProperty('input')
+          p.animateFromRemote(input)
         }
       })
     }

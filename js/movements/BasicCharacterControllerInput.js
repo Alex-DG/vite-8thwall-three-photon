@@ -27,7 +27,6 @@ class BasicCharacterControllerInput {
 
   dispose() {
     this.josytick.remove()
-
     document.removeEventListener('keydown', this.onKeyDown)
     document.removeEventListener('keyup', this.onKeyUp)
   }
