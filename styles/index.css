@@ -57,6 +57,19 @@ body {
   touch-action: manipulation;
 }
 
+.games-list {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  color: aliceblue;
+}
+#game-list-input {
+  align-self: center;
+  width: 100%;
+  max-width: 90%;
+  padding: 0.25em;
+}
+
 .menu-game {
   display: flex;
   flex-direction: column;

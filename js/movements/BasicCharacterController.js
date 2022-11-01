@@ -83,7 +83,7 @@ class BasicCharacterController {
       if (o.texture) o.texture.dispose()
     })
 
-    this.input?.dispose()
+    if (this.isClient) this.input?.dispose()
   }
 
   resetPosition() {

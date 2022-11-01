@@ -6,14 +6,33 @@ class _Menu {
     this.action[this.isVisible]()
   }
 
+  onChangeGameName(event) {
+    const value = event.target.value
+    console.log({
+      value: !!value,
+      isJoinedToRoom: this.client.isJoinedToRoom(),
+      test: !this.client.isJoinedToRoom() && !!value,
+    })
+
+    if (!this.client.isJoinedToRoom()) {
+      this.joinGame.disabled = !!!value
+    } else {
+      this.joinGame.disabled = true
+    }
+  }
+
+  onSelectGameName() {
+    this.gameListInput.value = ''
+  }
+
   onCreateGame() {
     console.log('✨', '[ Create room ]')
 
     try {
+      this.gameListInput.value = ''
       if (this.client.isInLobby()) {
         const roomName = `room-${this.client.availableRooms().length}` // the server will assign a GUID as name
         createRoom(roomName)
-
         this.client.createRoom(roomName)
       }
     } catch (error) {
@@ -25,6 +44,7 @@ class _Menu {
     console.log('✨', '[ Join room ]')
 
     try {
+      this.gameListInput.value = ''
       const index = this.gameList.selectedIndex
       const roomName = this.gameList.options[index].text
       createRoom(roomName)
@@ -37,6 +57,7 @@ class _Menu {
 
   onLeaveGame() {
     try {
+      this.gameListInput.value = ''
       this.client.leaveRoom()
     } catch (error) {
       console.log('🔴 onLeaveGame', { error })
@@ -59,16 +80,37 @@ class _Menu {
     this.clientBtns.style.display = clear ? 'none' : 'flex'
   }
 
+  // Add a single room in the drom down list
+  room({ name }) {
+    const isFound = [...this.gameList.children].some(
+      (opt) => opt.label === name
+    )
+    if (isFound) return
+
+    const item = document.createElement('option')
+    item.attributes['value'] = name
+    item.textContent = name
+    this.gameList.appendChild(item)
+    this.gameList.selectedIndex = this.gameList.children.length - 1
+    this.gameList.disabled = false
+  }
+
   roomList({ rooms }) {
     this.gameList.disabled = rooms.length <= 0
 
     rooms.forEach((r, index) => {
-      const item = document.createElement('option')
-      item.attributes['value'] = r.name
-      item.textContent = r.name
+      const isFound = [...this.gameList.children].some(
+        (opt) => opt.label === r.name
+      )
+      if (!isFound) {
+        const item = document.createElement('option')
+        item.attributes['value'] = r.name
+        item.textContent = r.name
 
-      this.gameList.appendChild(item)
-      this.gameList.selectedIndex = index
+        console.log({ children: this.gameList.children, name: r.name })
+        this.gameList.appendChild(item)
+        this.gameList.selectedIndex = index
+      }
     })
   }
 
@@ -100,12 +142,16 @@ class _Menu {
   bind() {
     this.show = this.show.bind(this)
     this.hide = this.hide.bind(this)
+    this.room = this.room.bind(this)
 
     this.onChangeMenuVisibility = this.onChangeMenuVisibility.bind(this)
     this.onCreateGame = this.onCreateGame.bind(this)
     this.onJoinGame = this.onJoinGame.bind(this)
     this.onLeaveGame = this.onLeaveGame.bind(this)
     this.onResetPos = this.onResetPos.bind(this)
+
+    this.onChangeGameName = this.onChangeGameName.bind(this)
+    this.onSelectGameName = this.onSelectGameName.bind(this)
   }
 
   init(options) {
@@ -148,6 +194,9 @@ class _Menu {
     this.clientHeader = document.getElementById('client-header')
 
     this.gameList = document.getElementById('game-list')
+    this.gameList.addEventListener('change', this.onSelectGameName)
+    this.gameListInput = document.getElementById('game-list-input')
+    this.gameListInput.addEventListener('change', this.onChangeGameName)
   }
 }
 

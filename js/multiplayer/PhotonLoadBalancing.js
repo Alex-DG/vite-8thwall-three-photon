@@ -95,16 +95,22 @@ const PhotonLoadBalancing = (function (_super) {
     const state = this.isJoinedToRoom() ? 'Joined' : 'none'
     const name = this.myRoom().name
     Menu.roomInfo({ state, name })
+    Menu.room({ name })
   }
 
   PhotonLoadBalancing.prototype.onActorJoin = function (actor) {
+    if (actor.actorNr !== this.myActor().actorNr) {
+      // Check if the room menu needs an update
+      Menu.room({ name: actor.getRoom().name })
+    }
+
     Object.keys(this.myRoomActors()).forEach((key) => {
       const roomActor = this.myRoomActors()[key]
 
       const room = roomActor.getRoom()
 
       const isFound = store.actors[room.name].some(
-        (ra) => ra.actorNr === roomActor.actorNr
+        (storeActor) => storeActor.actorNr === roomActor.actorNr
       )
 
       if (!isFound) {

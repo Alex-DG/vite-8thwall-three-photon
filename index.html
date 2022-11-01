@@ -5,7 +5,7 @@
     <link rel="icon" type="image/svg+xml" href="./assets/favicon.svg" />
     <meta
       name="viewport"
-      content="width=device-width, initial-scale=1.0 user-scalable=no"
+      content="width=device-width, initial-scale=1.0 maximum-scale=1"
     />
     <title>8thWall + Three + Photon</title>
 
@@ -26,7 +26,11 @@
       <button id="visibility-btn">Hide</button>
       <div id="menu-container">
         <div class="menu-game">
-          <select id="game-list" disabled></select>
+          <div class="games-list">
+            <select id="game-list" disabled></select>
+            <b>or</b>
+            <input id="game-list-input" value="" placeholder="Room name" />
+          </div>
 
           <div class="menu-states">
             <h3 id="client-header"></h3>
